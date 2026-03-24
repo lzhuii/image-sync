@@ -18,3 +18,6 @@ jobs:
 
       - name: Login to ACR
         run: skopeo login registry.cn-beijing.aliyuncs.com -u "${{ secrets.ACR_USERNAME }}" -p "${{ secrets.ACR_PASSWORD }}"
+
+      - name: Sync Images
+        run: skopeo copy --all docker://docker.io/library/nginx:latest docker://registry.cn-beijing.aliyuncs.com/cn-base/nginx:latest
