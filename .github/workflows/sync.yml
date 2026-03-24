@@ -24,7 +24,6 @@ jobs:
         run: |
           skopeo copy --all docker://docker.io/library/ubuntu:latest docker://$REGISTRY/cn-infra/ubuntu:latest
           skopeo copy --all docker://docker.io/library/debian:latest docker://$REGISTRY/cn-infra/debian:latest
-          skopeo copy --all docker://docker.io/library/centos:latest docker://$REGISTRY/cn-infra/centos:latest
 
           skopeo copy --all docker://docker.io/library/nginx:latest docker://$REGISTRY/cn-infra/nginx:latest
           skopeo copy --all docker://docker.io/library/redis:latest docker://$REGISTRY/cn-infra/redis:latest
