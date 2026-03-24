@@ -1,0 +1,20 @@
+name: Sync Container Images to ACR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-images:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install skopeo
+        run: sudo apt-get install -y skopeo
+
+      - name: Login to ACR
+        run: skopeo login registry.cn-beijing.aliyuncs.com -u "${{ secrets.ACR_USERNAME }}" -p "${{ secrets.ACR_PASSWORD }}"
