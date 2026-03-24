@@ -3,7 +3,7 @@ name: Sync Container Images to ACR
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   sync-images:
