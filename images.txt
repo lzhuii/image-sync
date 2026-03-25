@@ -1,3 +1,4 @@
 cn-infra|redis:8.6.2
 cn-infra|postgres:18.3
 cn-infra|minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
+lzhui|ghcr.io/pocketpairjp/palserver:v0.7.2.87654
