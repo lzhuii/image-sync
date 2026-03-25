@@ -22,5 +22,7 @@ jobs:
 
       - name: Sync Images
         run: |
-          skopeo copy --all docker://docker.io/library/postgres:18.3 docker://$REGISTRY/cn-infra/postgres:18.3
-          skopeo copy --all docker://docker.io/library/redis:8.6.2 docker://$REGISTRY/cn-infra/redis:8.6.2
+          while IFS='|' read -r namespace src; do
+              image=${src##*/}
+              skopeo copy --all docker://$src docker://$REGISTRY/$namespace/$image
+          done < images.txt

@@ -1,0 +1,2 @@
+cn-infra|redis:8.6.2
+cn-infra|postgres:18.3
