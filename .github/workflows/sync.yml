@@ -22,14 +22,5 @@ jobs:
 
       - name: Sync Images
         run: |
-          skopeo copy --all docker://docker.io/library/ubuntu:latest docker://$REGISTRY/cn-base/ubuntu:latest
-          skopeo copy --all docker://docker.io/library/debian:latest docker://$REGISTRY/cn-base/debian:latest
-
-          #skopeo copy --all docker://docker.io/library/nginx:latest docker://$REGISTRY/cn-infra/nginx:latest
-          #skopeo copy --all docker://docker.io/library/redis:latest docker://$REGISTRY/cn-infra/redis:latest
-          #skopeo copy --all docker://docker.io/library/postgres:latest docker://$REGISTRY/cn-infra/postgres:latest
-          #skopeo copy --all docker://docker.io/library/mysql:latest docker://$REGISTRY/cn-infra/mysql:latest
-          #skopeo copy --all docker://docker.io/library/zookeeper:latest docker://$REGISTRY/cn-infra/zookeeper:latest
-          #skopeo copy --all docker://docker.io/library/flink:latest docker://$REGISTRY/cn-infra/flink:latest
-          #skopeo copy --all docker://docker.io/library/spark:latest docker://$REGISTRY/cn-infra/spark:latest
-          #skopeo copy --all docker://docker.io/library/clickhouse:latest docker://$REGISTRY/cn-infra/clickhouse:latest
+          skopeo copy --all docker://docker.io/library/postgres:18.3 docker://$REGISTRY/cn-infra/postgres:18.3
+          skopeo copy --all docker://docker.io/library/redis:8.6.2 docker://$REGISTRY/cn-infra/redis:8.6.2
