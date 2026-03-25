@@ -1,3 +1,4 @@
+#!/bin/bash
 while IFS='|' read -r namespace src; do
     image=${src##*/}
     dst="$REGISTRY/$namespace/$image"

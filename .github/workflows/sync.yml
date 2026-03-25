@@ -21,4 +21,4 @@ jobs:
         run: skopeo login $REGISTRY -u "${{ secrets.ACR_USERNAME }}" -p "${{ secrets.ACR_PASSWORD }}"
 
       - name: Sync Images
-        run: sh sync.sh
+        run: ./sync.sh
