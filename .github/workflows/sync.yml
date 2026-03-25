@@ -21,8 +21,4 @@ jobs:
         run: skopeo login $REGISTRY -u "${{ secrets.ACR_USERNAME }}" -p "${{ secrets.ACR_PASSWORD }}"
 
       - name: Sync Images
-        run: |
-          while IFS='|' read -r namespace src; do
-              image=${src##*/}
-              skopeo copy --all docker://$src docker://$REGISTRY/$namespace/$image
-          done < images.txt
+        run: sh sync.sh
