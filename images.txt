@@ -5,4 +5,4 @@
 #cn-infra|nginx:1.29.7
 #cn-infra|minio/minio:RELEASE.2025-04-22T22-12-26Z
 #lzhui|ghcr.io/pocketpairjp/palserver:v0.7.2.87654
-gcr.io/k8s-minikube/kicbase:v0.0.50
+cn-base|gcr.io/k8s-minikube/kicbase:v0.0.50
