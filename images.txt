@@ -8,12 +8,15 @@ cn-infra|mysql:8.4.8
 cn-infra|redis:8.6.2
 cn-infra|nginx:1.29.7
 cn-infra|minio/minio:RELEASE.2025-04-22T22-12-26Z
+cn-infra|minio/mc
 cn-infra|ghcr.io/apache/flink-kubernetes-operator:f504138
 cn-infra|quay.io/jetstack/cert-manager-cainjector:v1.18.2
 cn-infra|quay.io/jetstack/cert-manager-controller:v1.18.2
 cn-infra|quay.io/jetstack/cert-manager-webhook:v1.18.2
 cn-infra|kubernetesui/dashboard:v2.7.0
 cn-infra|kubernetesui/metrics-scraper:v1.0.8
+cn-infra|tabulario/spark-iceberg
+cn-infra|apache/iceberg-rest-fixture
 
 ## lzhui - 应用/工具类
 lzhui|ghcr.io/pocketpairjp/palserver:v0.7.2.87654
