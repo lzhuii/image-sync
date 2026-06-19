@@ -1,22 +1,22 @@
 # cn-base - 基础语言/运行时环境
-cn-base|python
-cn-base|gcr.io/k8s-minikube/kicbase
+cn-base|python:latest
+cn-base|gcr.io/k8s-minikube/kicbase:latest
 
 ## cn-infra - 基础中间件与存储
-cn-infra|postgres
-cn-infra|mysql
-cn-infra|redis
-cn-infra|nginx
-cn-infra|minio/minio
-cn-infra|minio/mc
-cn-infra|ghcr.io/apache/flink-kubernetes-operator
-cn-infra|quay.io/jetstack/cert-manager-cainjector
-cn-infra|quay.io/jetstack/cert-manager-controller
-cn-infra|quay.io/jetstack/cert-manager-webhook
-cn-infra|kubernetesui/dashboard
-cn-infra|kubernetesui/metrics-scraper
-cn-infra|tabulario/spark-iceberg
-cn-infra|apache/iceberg-rest-fixture
+cn-infra|postgres:latest
+cn-infra|mysql:latest
+cn-infra|redis:latest
+cn-infra|nginx:latest
+cn-infra|minio/minio:latest
+cn-infra|minio/mc:latest
+cn-infra|ghcr.io/apache/flink-kubernetes-operator:latest
+cn-infra|quay.io/jetstack/cert-manager-cainjector:latest
+cn-infra|quay.io/jetstack/cert-manager-controller:latest
+cn-infra|quay.io/jetstack/cert-manager-webhook:latest
+cn-infra|kubernetesui/dashboard:latest
+cn-infra|kubernetesui/metrics-scraper:latest
+cn-infra|tabulario/spark-iceberg:latest
+cn-infra|apache/iceberg-rest-fixture:latest
 
 ## lzhui - 应用/工具类
-lzhui|ghcr.io/pocketpairjp/palserver
+lzhui|ghcr.io/pocketpairjp/palserver:latest
