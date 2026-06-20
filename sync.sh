@@ -9,5 +9,5 @@ grep -v -E "^(#|$)" images.txt | while IFS='|' read -r namespace src; do
         continue
     fi
     echo "$src -> $dst"
-    skopeo copy -a -q docker://$src docker://$dst
+    skopeo copy -a docker://$src docker://$dst
 done
