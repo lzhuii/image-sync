@@ -17,6 +17,7 @@ cn-infra|kubernetesui/dashboard
 cn-infra|kubernetesui/metrics-scraper
 cn-infra|tabulario/spark-iceberg
 cn-infra|apache/iceberg-rest-fixture
+cn-infra|apache/spark:4.1.2-scala
 
 ## lzhui - 应用/工具类
 lzhui|ghcr.io/pocketpairjp/palserver
