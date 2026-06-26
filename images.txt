@@ -3,7 +3,7 @@ cn-base|python
 cn-base|gcr.io/k8s-minikube/kicbase:v0.0.50
 
 ## cn-infra - 基础中间件与存储
-cn-infra|postgres
+cn-infra|postgres:18
 cn-infra|mysql
 cn-infra|redis
 cn-infra|nginx
