@@ -15,6 +15,7 @@ cn-infra|quay.io/jetstack/cert-manager-controller:v1.18.2
 cn-infra|quay.io/jetstack/cert-manager-webhook:v1.18.2
 cn-infra|kubernetesui/dashboard:v2.7.0
 cn-infra|kubernetesui/metrics-scraper:v1.0.8
+cn-infra|rancher/mirrored-pause:3.6
 cn-infra|tabulario/spark-iceberg
 cn-infra|apache/iceberg-rest-fixture
 cn-infra|apache/spark:4.1.2-scala
