@@ -16,6 +16,9 @@ cn-infra|quay.io/jetstack/cert-manager-webhook:v1.18.2
 cn-infra|kubernetesui/dashboard:v2.7.0
 cn-infra|kubernetesui/metrics-scraper:v1.0.8
 cn-infra|rancher/mirrored-pause:3.6
+cn-infra|rancher/mirrored-coredns-coredns:1.14.4
+cn-infra|rancher/local-path-provisioner:v0.0.36
+cn-infra|rancher/mirrored-metrics-server:v0.8.1
 cn-infra|tabulario/spark-iceberg
 cn-infra|apache/iceberg-rest-fixture
 cn-infra|apache/spark:4.1.2-scala
