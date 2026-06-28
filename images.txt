@@ -22,7 +22,8 @@
 #cn-infra|rancher/klipper-helm:v0.11.1-build20260615
 #cn-infra|rancher/klipper-lb:v0.4.17
 #cn-infra|rancher/mirrored-library-traefik:3.7.4
-cn-infra|ghcr.io/headlamp-k8s/headlamp:v0.43.0
+#cn-infra|ghcr.io/headlamp-k8s/headlamp:v0.43.0
+cn-infra|apache/spark-kubernetes-operator:0.9.0
 #cn-infra|tabulario/spark-iceberg
 #cn-infra|apache/iceberg-rest-fixture
 #cn-infra|apache/spark:4.1.2-scala
