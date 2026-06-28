@@ -1,28 +1,29 @@
 # cn-base - 基础语言/运行时环境
-cn-base|python
-cn-base|gcr.io/k8s-minikube/kicbase:v0.0.50
+#cn-base|python
+#cn-base|gcr.io/k8s-minikube/kicbase:v0.0.50
 
 ## cn-infra - 基础中间件与存储
-cn-infra|postgres:18
-cn-infra|mysql
-cn-infra|redis
-cn-infra|nginx
-cn-infra|minio/minio
-cn-infra|minio/mc
-cn-infra|ghcr.io/apache/flink-kubernetes-operator:f504138   
-cn-infra|quay.io/jetstack/cert-manager-cainjector:v1.18.2
-cn-infra|quay.io/jetstack/cert-manager-controller:v1.18.2
-cn-infra|quay.io/jetstack/cert-manager-webhook:v1.18.2
-cn-infra|kubernetesui/dashboard:v2.7.0
-cn-infra|kubernetesui/metrics-scraper:v1.0.8
-cn-infra|rancher/mirrored-pause:3.6
-cn-infra|rancher/mirrored-coredns-coredns:1.14.4
-cn-infra|rancher/local-path-provisioner:v0.0.36
-cn-infra|rancher/mirrored-metrics-server:v0.8.1
-cn-infra|tabulario/spark-iceberg
-cn-infra|apache/iceberg-rest-fixture
-cn-infra|apache/spark:4.1.2-scala
-cn-infra|trinodb/trino
+#cn-infra|postgres:18
+#cn-infra|mysql
+#cn-infra|redis
+#cn-infra|nginx
+#cn-infra|minio/minio
+#cn-infra|minio/mc
+#cn-infra|ghcr.io/apache/flink-kubernetes-operator:f504138   
+#cn-infra|quay.io/jetstack/cert-manager-cainjector:v1.18.2
+#cn-infra|quay.io/jetstack/cert-manager-controller:v1.18.2
+#cn-infra|quay.io/jetstack/cert-manager-webhook:v1.18.2
+#cn-infra|kubernetesui/dashboard:v2.7.0
+#cn-infra|kubernetesui/metrics-scraper:v1.0.8
+#cn-infra|rancher/mirrored-pause:3.6
+#cn-infra|rancher/mirrored-coredns-coredns:1.14.4
+#cn-infra|rancher/local-path-provisioner:v0.0.36
+#cn-infra|rancher/mirrored-metrics-server:v0.8.1
+cn-infra|rancher/klipper-helm:v0.11.1-build20260615
+#cn-infra|tabulario/spark-iceberg
+#cn-infra|apache/iceberg-rest-fixture
+#cn-infra|apache/spark:4.1.2-scala
+#cn-infra|trinodb/trino
 
 ## lzhui - 应用/工具类
-lzhui|ghcr.io/pocketpairjp/palserver
+#lzhui|ghcr.io/pocketpairjp/palserver
