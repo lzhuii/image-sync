@@ -20,8 +20,9 @@
 #cn-infra|rancher/local-path-provisioner:v0.0.36
 #cn-infra|rancher/mirrored-metrics-server:v0.8.1
 #cn-infra|rancher/klipper-helm:v0.11.1-build20260615
-cn-infra|rancher/klipper-lb:v0.4.17
-cn-infra|rancher/mirrored-library-traefik:3.7.4
+#cn-infra|rancher/klipper-lb:v0.4.17
+#cn-infra|rancher/mirrored-library-traefik:3.7.4
+cn-infra|ghcr.io/headlamp-k8s/headlamp:v0.43.0
 #cn-infra|tabulario/spark-iceberg
 #cn-infra|apache/iceberg-rest-fixture
 #cn-infra|apache/spark:4.1.2-scala
