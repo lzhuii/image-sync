@@ -2,14 +2,14 @@
 #cn-base|python
 
 ## cn-infra - 基础中间件与存储
-cn-infra|postgres:18
-cn-infra|mysql:9
-cn-infra|redis:8
-cn-infra|nginx:1.31
-cn-infra|spark:4.1.2
-cn-infra|flink:2.3.0
+#cn-infra|postgres:18
+#cn-infra|mysql:9
+#cn-infra|redis:8
+#cn-infra|nginx:1.31
+#cn-infra|spark:4.1.2
+#cn-infra|flink:2.3.0
 #cn-infra|minio/minio:RELEASE.2025-04-22T22-12-26Z
-#cn-infra|apache/iceberg-rest-fixture
+cn-infra|apache/iceberg-rest-fixture
 #cn-infra|apache/spark-kubernetes-operator:0.9.0
 #cn-infra|gcr.io/k8s-minikube/kicbase:v0.0.50
 #cn-infra|ghcr.io/apache/flink-kubernetes-operator:f504138   
@@ -26,8 +26,7 @@ cn-infra|flink:2.3.0
 #cn-infra|rancher/mirrored-library-traefik:3.7.4
 #cn-infra|rancher/mirrored-metrics-server:v0.8.1
 #cn-infra|rancher/mirrored-pause:3.6
-#cn-infra|tabulario/spark-iceberg
-cn-infra|trinodb/trino
+#cn-infra|trinodb/trino
 
 ## lzhui - 应用/工具类
 #lzhui|ghcr.io/pocketpairjp/palserver
