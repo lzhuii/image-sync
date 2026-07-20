@@ -2,14 +2,15 @@
 #cn-base|python
 
 ## cn-infra - 基础中间件与存储
-#cn-infra|postgres:18
-#cn-infra|mysql:9
-#cn-infra|redis:8
-#cn-infra|nginx:1.31
+cn-infra|nginx:1.30-alpine
+cn-infra|postgres:16.14-alpine
+cn-infra|mysql:mysql:8.4.10
+cn-infra|redis:7.4-alpine
+cn-infra|minio/minio:RELEASE.2025-04-22T22-12-26Z
+cn-infra|gitea/gitea:1.27
 #cn-infra|spark:4.1.2
 #cn-infra|flink:2.3.0
-#cn-infra|minio/minio:RELEASE.2025-04-22T22-12-26Z
-cn-infra|apache/kafka:4.3.1
+#cn-infra|apache/kafka:4.3.1
 #cn-infra|apache/iceberg-rest-fixture
 #cn-infra|apache/spark-kubernetes-operator:0.9.0
 #cn-infra|gcr.io/k8s-minikube/kicbase:v0.0.50
