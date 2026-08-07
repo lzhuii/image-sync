@@ -7,7 +7,7 @@
 #cn-infra|mysql:8.4.10
 #cn-infra|redis:7.4-alpine
 #cn-infra|minio/minio:RELEASE.2025-04-22T22-12-26Z
-#cn-infra|gitea/gitea:1.27
+cn-infra|gitea/gitea
 #cn-infra|spark:4.1.2
 #cn-infra|flink:2.3.0
 #cn-infra|apache/kafka:4.3.1
@@ -28,7 +28,7 @@
 #cn-infra|rancher/mirrored-library-traefik:3.7.4
 #cn-infra|rancher/mirrored-metrics-server:v0.8.1
 #cn-infra|rancher/mirrored-pause:3.6
-#cn-infra|trinodb/trino:483-amd64
+cn-infra|trinodb/trino
 cn-infra|portainer/portainer-ce
 
 ## lzhui - 应用/工具类
