@@ -1,5 +1,5 @@
 # cn-base - 基础语言/运行时环境
-#cn-base|python
+cn-base|python
 
 ## cn-infra - 基础中间件与存储
 #cn-infra|nginx:1.30-alpine
@@ -14,7 +14,7 @@ cn-infra|gitea/gitea
 #cn-infra|apache/iceberg-rest-fixture
 #cn-infra|apache/spark-kubernetes-operator:0.9.0
 #cn-infra|gcr.io/k8s-minikube/kicbase:v0.0.50
-#cn-infra|ghcr.io/apache/flink-kubernetes-operator:f504138   
+#cn-infra|ghcr.io/apache/flink-kubernetes-operator:f504138
 #cn-infra|ghcr.io/headlamp-k8s/headlamp:v0.43.0
 #cn-infra|kubernetesui/dashboard:v2.7.0
 #cn-infra|kubernetesui/metrics-scraper:v1.0.8
