@@ -75,8 +75,8 @@ awk -F'|' '
         gsub(/^[[:space:]]+|[[:space:]]+$/, "", f[2])
         if (f[1] != "" && f[2] != "") print f[1] "|" f[2]
     }
-' "$LIST_FILE" \
-    | xargs -P "$CONCURRENCY" -I{} bash -c 'sync_one "${1%%|*}" "${1#*|}"' _ {}
+' "$LIST_FILE" |
+    xargs -P "$CONCURRENCY" -I{} bash -c 'sync_one "${1%%|*}" "${1#*|}"' _ {}
 
 rc=$?
 if [ "$rc" -ne 0 ]; then
