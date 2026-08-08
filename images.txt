@@ -2,22 +2,29 @@
 cn-base|python
 
 ## cn-infra - 基础中间件与存储
-#cn-infra|nginx:1.30-alpine
-#cn-infra|postgres:16.14-alpine
-#cn-infra|mysql:8.4.10
-#cn-infra|redis:7.4-alpine
-#cn-infra|minio/minio:RELEASE.2025-04-22T22-12-26Z
+cn-infra|nginx
+cn-infra|postgres
+cn-infra|mysql
+cn-infra|redis
+cn-infra|minio/minio
 cn-infra|gitea/gitea
+cn-infra|apache/kafka
 #cn-infra|spark:4.1.2
 #cn-infra|flink:2.3.0
-#cn-infra|apache/kafka:4.3.1
+cn-infra|apache/dolphinscheduler-tools
+cn-infra|apache/dolphinscheduler-master
+cn-infra|apache/dolphinscheduler-worker
+cn-infra|apache/dolphinscheduler-api
+cn-infra|apache/dolphinscheduler-alert-server
+cn-infra|trinodb/trino
+cn-infra|portainer/portainer-ce
 #cn-infra|apache/iceberg-rest-fixture
 #cn-infra|apache/spark-kubernetes-operator:0.9.0
+#cn-infra|kubernetesui/dashboard:v2.7.0
+#cn-infra|kubernetesui/metrics-scraper:v1.0.8
 #cn-infra|gcr.io/k8s-minikube/kicbase:v0.0.50
 #cn-infra|ghcr.io/apache/flink-kubernetes-operator:f504138
 #cn-infra|ghcr.io/headlamp-k8s/headlamp:v0.43.0
-#cn-infra|kubernetesui/dashboard:v2.7.0
-#cn-infra|kubernetesui/metrics-scraper:v1.0.8
 #cn-infra|quay.io/jetstack/cert-manager-cainjector:v1.18.2
 #cn-infra|quay.io/jetstack/cert-manager-controller:v1.18.2
 #cn-infra|quay.io/jetstack/cert-manager-webhook:v1.18.2
@@ -28,8 +35,6 @@ cn-infra|gitea/gitea
 #cn-infra|rancher/mirrored-library-traefik:3.7.4
 #cn-infra|rancher/mirrored-metrics-server:v0.8.1
 #cn-infra|rancher/mirrored-pause:3.6
-cn-infra|trinodb/trino
-cn-infra|portainer/portainer-ce
 
 ## lzhui - 应用/工具类
 #lzhui|ghcr.io/pocketpairjp/palserver
