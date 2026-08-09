@@ -16,7 +16,7 @@ cn-infra|apache/dolphinscheduler-master
 cn-infra|apache/dolphinscheduler-worker
 cn-infra|apache/dolphinscheduler-api
 cn-infra|apache/dolphinscheduler-alert-server
-cn-infra|apache/apache/dolphinscheduler-standalone-server
+cn-infra|apache/dolphinscheduler-standalone-server
 cn-infra|trinodb/trino
 cn-infra|portainer/portainer-ce
 cn-infra|apache/iceberg-rest-fixture
@@ -29,15 +29,14 @@ cn-infra|ghcr.io/headlamp-k8s/headlamp:v0.43.0
 cn-infra|quay.io/jetstack/cert-manager-cainjector:v1.18.2
 cn-infra|quay.io/jetstack/cert-manager-controller:v1.18.2
 cn-infra|quay.io/jetstack/cert-manager-webhook:v1.18.2
-cn-infra|rancher/klipper-helm:v0.11.1-build20260615
-cn-infra|rancher/klipper-lb:v0.4.17
 # k3s
 cn-infra|rancher/mirrored-pause:3.10.2
 cn-infra|rancher/local-path-provisioner:v0.0.36
 cn-infra|rancher/mirrored-coredns-coredns:1.14.6
 cn-infra|rancher/mirrored-metrics-server:v0.9.0
 cn-infra|rancher/klipper-helm:v0.13.3-build20260727
-cn-infra|rancher/mirrored-library-traefik:3.7.4
+cn-infra|rancher/mirrored-library-traefik:3.7.8
+cn-infra|rancher/klipper-lb:v0.4.17
 
 ## lzhui - 应用/工具类
 lzhui|ghcr.io/pocketpairjp/palserver
