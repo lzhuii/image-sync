@@ -1,72 +1,71 @@
 # Image Sync
 
-🚀 **一键同步 Docker 镜像到阿里云容器镜像服务**
+一键将 Docker Hub / GCR / GHCR / Quay.io 等仓库的镜像同步到阿里云 ACR。
 
-这个工具通过自动化流程将指定的 Docker 镜像从各种源（如 Docker Hub、GCR 等）同步到你的阿里云容器镜像服务。支持增量同步，只复制有更新的镜像，节省时间和带宽。
+## 工作原理
 
-## ✨ 特性
+`images.txt` 维护镜像清单 → GitHub Actions 触发 `sync.sh` → `skopeo` 比对 digest，仅同步有变化的镜像。
 
-- 🔄 **智能同步**：检查镜像摘要，只同步有变化的镜像
-- 📦 **批量处理**：支持多个镜像和命名空间
-- 🛡️ **高效可靠**：使用 `skopeo` 传输镜像，支持并行同步与失败自动重试
-- 📝 **简单配置**：只需编辑 `images.txt` 文件添加镜像列表
-- 🤖 **自动化触发**：Push 代码、手动触发或每日定时自动同步
+## 快速开始
 
-## 🚀 快速开始
+### 1. 配置 Secrets
 
-### 1. 添加镜像
+在仓库 **Settings → Secrets** 中添加：
 
-编辑 `images.txt` 文件，添加需要同步的镜像。每行格式：`命名空间|源镜像`，支持行内注释：
+| Secret         | 说明                     |
+| -------------- | ------------------------ |
+| `ACR_USERNAME` | 阿里云容器镜像服务用户名 |
+| `ACR_PASSWORD` | 阿里云容器镜像服务密码   |
 
-例如：
+### 2. 编辑镜像清单
+
+在 `images.txt` 中添加条目，格式为 `命名空间|源镜像`：
 
 ```
-my-app|nginx:latest
-my-db|postgres:13
+cn-infra|nginx                          # Docker Hub → registry/cn-infra/nginx
+cn-infra|quay.io/jetstack/cert-manager  # Quay.io   → registry/cn-infra/cert-manager
+cn-infra|gcr.io/k8s-minikube/kicbase    # GCR       → registry/cn-infra/kicbase
 ```
 
-### 2. 提交并推送
+以 `#` 开头的行为注释，空行自动忽略。
+
+### 3. 推送触发同步
 
 ```bash
-git add images.txt
-git commit -m "Add new images"
-git push
+git add images.txt && git commit -m "Add images" && git push
 ```
 
-推送后，自动化流程会自动触发同步所有镜像！
+推送到 `master` 分支后，GitHub Actions 自动执行同步。
 
-### 3. 手动触发（可选）
+## 配置
 
-在 GitHub 仓库的 **Actions** 页面选择 **Sync Container Images to ACR**，点击 **Run workflow** 即可手动执行一次同步。
+通过环境变量调整行为：
 
-## ⚙️ 配置
+| 变量          | 默认值                             | 说明         |
+| ------------- | ---------------------------------- | ------------ |
+| `REGISTRY`    | `registry.cn-beijing.aliyuncs.com` | 目标仓库地址 |
+| `CONCURRENCY` | `4`                                | 同步并发数   |
 
-脚本支持通过环境变量调整同步行为：
-
-| 变量 | 默认值 | 说明 |
-| --- | --- | --- |
-| `REGISTRY` | `registry.cn-beijing.aliyuncs.com` | 目标仓库地址 |
-| `CONCURRENCY` | `4` | 同时同步的镜像数量 |
-| `RETRIES` | `3` | 单个镜像失败后的重试次数 |
-
-本地运行示例：
+本地运行：
 
 ```bash
+skopeo login registry.cn-beijing.aliyuncs.com -u <user> -p <password>
 REGISTRY=registry.cn-beijing.aliyuncs.com CONCURRENCY=8 bash sync.sh
 ```
 
-## 📋 镜像列表
+## 项目结构
 
-当前支持的镜像包括：
+```
+.
+├── sync.sh                          # 核心同步脚本
+├── images.txt                       # 镜像清单
+└── .github/workflows/sync.yml       # GitHub Actions 工作流
+```
 
-- **基础语言环境**：Python, Minikube KIC
-- **基础设施**：PostgreSQL, MySQL, Redis, Nginx, MinIO, Flink Operator, Cert Manager, Kubernetes Dashboard
-- **应用工具**：PalServer 等
+## 依赖
 
-## 🤝 贡献
+- [skopeo](https://github.com/podman-container-tools/skopeo)
 
-欢迎提交 Issue 和 Pull Request！请在 `images.txt` 中添加新镜像或改进脚本。
+## 许可证
 
-## 📄 许可证
-
-MIT License
+MIT
