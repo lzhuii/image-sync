@@ -110,6 +110,7 @@ Rules:
 | `REGISTRY` | `registry.cn-beijing.aliyuncs.com` | Target ACR address |
 | `CONCURRENCY` | `4` | Parallel sync jobs |
 | `MAX_NAMESPACES` | `3` | Max namespace count (validation only) |
+| `PLATFORMS` | `linux/amd64,linux/arm64` | Comma-separated platform list for `skopeo copy` |
 
 `REGISTRY` is the Beijing ACR endpoint by default. Override it before deploying to another region (e.g. `registry.cn-hangzhou.aliyuncs.com`).
 
@@ -205,6 +206,9 @@ You hit the anonymous rate limit. Configure `DOCKERHUB_USERNAME` and `DOCKERHUB_
 
 **`image not found` on source.**
 The source tag doesn't exist or is unreachable. Check the exact reference in your browser first.
+
+**`denied: unknown manifest class for application/vnd.oci.empty.v1+json` when copying a multi-arch image.**
+Some source images (e.g. `gitea/gitea`) have manifest lists that include empty placeholder manifests. ACR personal edition rejects the `application/vnd.oci.empty.v1+json` media type. This repo uses `--multi-arch=linux/amd64,linux/arm64` by default instead of `--all` to skip those empty entries. If you need different platforms, set `PLATFORMS` accordingly.
 
 **Namespace limit reached (validate error).**
 The manifest uses more than 3 distinct namespaces. Consolidate images under fewer namespaces, or upgrade to ACR Enterprise.

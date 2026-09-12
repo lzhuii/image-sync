@@ -13,8 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
       - name: shellcheck
-        uses: rhysd/action-shellcheck@v1
-        with:
-          scversion: stable
-          check_together: "yes"
+        run: shellcheck -x sync.sh

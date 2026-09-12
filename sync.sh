@@ -12,6 +12,9 @@ CONCURRENCY="${CONCURRENCY:-4}"
 
 MAX_NAMESPACES="${MAX_NAMESPACES:-3}"
 
+# 逗号分隔的平台列表，避免 --all 触发 ACR 对 empty v1 manifest 的拒绝
+PLATFORMS="${PLATFORMS:-linux/amd64,linux/arm64}"
+
 usage() {
     cat <<EOF
 用法：bash sync.sh [validate]
@@ -23,6 +26,7 @@ usage() {
   REGISTRY        目标仓库地址（默认 ${REGISTRY}）
   CONCURRENCY     同步并发数（默认 ${CONCURRENCY}）
   MAX_NAMESPACES  最大命名空间数上限（默认 ${MAX_NAMESPACES}，ACR 个人版为 3）
+  PLATFORMS       复制的平台列表（默认 ${PLATFORMS}，逗号分隔）
 
 源端凭据通过 skopeo 默认 authfile 读取，由调用方（如 GitHub Actions）
 预先执行 skopeo login 完成。本脚本不处理认证。
@@ -98,7 +102,7 @@ sync_one() {
         return 0
     fi
 
-    skopeo copy --all "docker://$src" "docker://$dst" || {
+    skopeo copy --multi-arch="$PLATFORMS" "docker://$src" "docker://$dst" || {
         echo "✗ $dst：复制失败"
         return 1
     }
@@ -108,6 +112,7 @@ sync_one() {
 main() {
     export -f sync_one
     export REGISTRY
+    export PLATFORMS
 
     awk -F'|' '/^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
         { sub(/[[:space:]]*#.*/, ""); if (split($0, f, "|") < 2) next
