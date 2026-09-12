@@ -92,21 +92,21 @@ sync_one() {
 
     local src_d dst_d
     src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src") || {
-        echo "✗ $dst：无法从源端拉取 $src"
+        echo "✗ 失败 $src → $dst（源端拉取失败）"
         return 1
     }
 
     dst_d=$(skopeo inspect --format '{{.Digest}}' "docker://$dst" 2>/dev/null) || true
     if [ -n "$dst_d" ] && [ "$src_d" = "$dst_d" ]; then
-        echo "＝ $dst 未变化，跳过"
+        echo "＝ 跳过 $src → $dst（digest 一致 ${src_d:0:19}...）"
         return 0
     fi
 
     skopeo copy --multi-arch="$PLATFORMS" "docker://$src" "docker://$dst" || {
-        echo "✗ $dst：复制失败"
+        echo "✗ 失败 $src → $dst（复制失败）"
         return 1
     }
-    echo "✓ $dst"
+    echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
 }
 
 main() {
@@ -123,9 +123,9 @@ main() {
         xargs -P "$CONCURRENCY" -I{} bash -c 'sync_one "${1%%|*}" "${1#*|}"' _ {} |
         awk '
             BEGIN { total = 0; ok = 0; skip = 0; fail = 0 }
-            /^✓/ { total++; ok++ }
-            /^＝/ { total++; skip++ }
-            /^✗/ { total++; fail++ }
+            /^✓/ { total++; ok++; print }
+            /^＝/ { total++; skip++; print }
+            /^✗/ { total++; fail++; print }
             END {
                 printf "\n══════════════════════════════════\n"
                 printf "汇总：同步 %d · 跳过 %d · 失败 %d · 总计 %d\n", ok, skip, fail, total
