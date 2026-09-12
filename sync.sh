@@ -86,9 +86,11 @@ sync_one() {
     local ns="$1" src="$2"
     local dst="$REGISTRY/$ns/${src##*/}"
 
-    local src_d dst_d
-    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src") || {
+    local src_d dst_d output
+
+    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src" 2>&1) || {
         echo "✗ 失败 $src → $dst（源端拉取失败）"
+        echo "  $src_d"
         return 1
     }
 
@@ -98,8 +100,9 @@ sync_one() {
         return 0
     fi
 
-    skopeo copy -a "docker://$src" "docker://$dst" || {
+    output=$(skopeo copy -a "docker://$src" "docker://$dst" 2>&1) || {
         echo "✗ 失败 $src → $dst（复制失败）"
+        echo "  $output"
         return 1
     }
     echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
