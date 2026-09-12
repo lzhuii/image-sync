@@ -86,25 +86,30 @@ sync_one() {
     local ns="$1" src="$2"
     local dst="$REGISTRY/$ns/${src##*/}"
 
-    local src_d dst_d output
+    local src_d dst_d stderr_file
+    stderr_file=$(mktemp)
 
-    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src" 2>&1) || {
+    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src" 2>"$stderr_file") || {
         echo "✗ 失败 $src → $dst（源端拉取失败）"
-        echo "  $src_d"
+        echo "  $(tail -3 "$stderr_file")"
+        rm -f "$stderr_file"
         return 1
     }
 
     dst_d=$(skopeo inspect --format '{{.Digest}}' "docker://$dst" 2>/dev/null) || true
     if [ -n "$dst_d" ] && [ "$src_d" = "$dst_d" ]; then
         echo "＝ 跳过 $src → $dst（digest 一致 ${src_d:0:19}...）"
+        rm -f "$stderr_file"
         return 0
     fi
 
-    output=$(skopeo copy -a "docker://$src" "docker://$dst" 2>&1) || {
+    skopeo copy -a "docker://$src" "docker://$dst" 2>"$stderr_file" || {
         echo "✗ 失败 $src → $dst（复制失败）"
-        echo "  $output"
+        echo "  $(tail -3 "$stderr_file")"
+        rm -f "$stderr_file"
         return 1
     }
+    rm -f "$stderr_file"
     echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
 }
 
