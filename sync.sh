@@ -12,8 +12,10 @@ CONCURRENCY="${CONCURRENCY:-4}"
 
 MAX_NAMESPACES="${MAX_NAMESPACES:-3}"
 
-# 逗号分隔的平台列表，避免 --all 触发 ACR 对 empty v1 manifest 的拒绝
-PLATFORMS="${PLATFORMS:-linux/amd64,linux/arm64}"
+# skopeo copy 的多架构模式：all / system / index-only
+# apt 仓库的 skopeo 不支持 platform-list（如 linux/amd64,linux/arm64），
+# 需要手动升级到 1.13+ 才能用。默认 all 保留完整 manifest list。
+MULTI_ARCH="${MULTI_ARCH:-all}"
 
 usage() {
     cat <<EOF
@@ -26,7 +28,7 @@ usage() {
   REGISTRY        目标仓库地址（默认 ${REGISTRY}）
   CONCURRENCY     同步并发数（默认 ${CONCURRENCY}）
   MAX_NAMESPACES  最大命名空间数上限（默认 ${MAX_NAMESPACES}，ACR 个人版为 3）
-  PLATFORMS       复制的平台列表（默认 ${PLATFORMS}，逗号分隔）
+  MULTI_ARCH      skopeo copy 多架构模式（默认 ${MULTI_ARCH}：all / system / index-only）
 
 源端凭据通过 skopeo 默认 authfile 读取，由调用方（如 GitHub Actions）
 预先执行 skopeo login 完成。本脚本不处理认证。
@@ -102,7 +104,7 @@ sync_one() {
         return 0
     fi
 
-    skopeo copy --multi-arch="$PLATFORMS" "docker://$src" "docker://$dst" || {
+    skopeo copy --multi-arch="$MULTI_ARCH" "docker://$src" "docker://$dst" || {
         echo "✗ 失败 $src → $dst（复制失败）"
         return 1
     }
@@ -112,7 +114,7 @@ sync_one() {
 main() {
     export -f sync_one
     export REGISTRY
-    export PLATFORMS
+    export MULTI_ARCH
 
     awk -F'|' '/^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
         { sub(/[[:space:]]*#.*/, ""); if (split($0, f, "|") < 2) next

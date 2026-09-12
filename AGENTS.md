@@ -39,7 +39,7 @@ skopeo login registry.cn-beijing.aliyuncs.com -u <user> -p <password>
 bash sync.sh
 ```
 
-- Env vars: `REGISTRY` (default `registry.cn-beijing.aliyuncs.com`, Beijing region — override before pushing elsewhere), `CONCURRENCY` (default `4`), `MAX_NAMESPACES` (default `3`), `PLATFORMS` (default `linux/amd64,linux/arm64` — use `--multi-arch` instead of `--all` because ACR personal edition rejects `application/vnd.oci.empty.v1+json` empty manifest entries that some upstream manifest lists include).
+- Env vars: `REGISTRY` (default `registry.cn-beijing.aliyuncs.com`, Beijing region — override before pushing elsewhere), `CONCURRENCY` (default `4`), `MAX_NAMESPACES` (default `3`), `MULTI_ARCH` (default `all` — apt skopeo only supports `all|system|index-only`, no platform-list; ACR personal edition rejects `application/vnd.oci.empty.v1+json` empty manifest entries that some upstream manifest lists include, so `--all` can fail on images like `gitea/gitea`).
 - `sync.sh` uses digest comparison; unchanged images are skipped. There is no `--force` flag — altering the source digest is the only way to re-push.
 
 ## Conventions

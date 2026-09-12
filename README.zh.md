@@ -110,7 +110,7 @@ bash sync.sh
 | `REGISTRY` | `registry.cn-beijing.aliyuncs.com` | 目标仓库地址 |
 | `CONCURRENCY` | `4` | 同步并发数 |
 | `MAX_NAMESPACES` | `3` | 命名空间上限（仅校验用） |
-| `PLATFORMS` | `linux/amd64,linux/arm64` | 逗号分隔的平台列表，传给 `skopeo copy` |
+| `MULTI_ARCH` | `all` | skopeo copy 多架构模式：`all` / `system` / `index-only` |
 
 `REGISTRY` 默认为北京 ACR 地址。部署到其他区域前需要覆盖（如 `registry.cn-hangzhou.aliyuncs.com`）。
 
@@ -208,7 +208,11 @@ Docker Hub [速率限制](https://docs.docker.com/docker-hub/download-rate-limit
 源 tag 不存在或无法访问。先用浏览器确认引用格式。
 
 **复制多架构镜像时 `denied: unknown manifest class for application/vnd.oci.empty.v1+json`。**
-部分源镜像（如 `gitea/gitea`）的 manifest list 包含空的占位 manifest。ACR 个人版拒绝 `application/vnd.oci.empty.v1+json` 媒体类型。本仓库默认使用 `--multi-arch=linux/amd64,linux/arm64` 而非 `--all`，以跳过这些空条目。如需其他平台组合，请设置 `PLATFORMS` 环境变量。
+部分源镜像（如 `gitea/gitea`）的 manifest list 包含空的占位 manifest。ACR 个人版拒绝 `application/vnd.oci.empty.v1+json` 媒体类型。Ubuntu 24.04 apt 仓库的 skopeo 仅支持 `--multi-arch=system|all|index-only`（不支持 platform-list），因此无法跳过个别平台。可行方案：
+
+1. 设置 `MULTI_ARCH=system` 只复制 runner 架构（会丢失多架构 manifest）。
+2. 升级 skopeo 到 1.13+（自行编译或手动安装），以启用 `--multi-arch=linux/amd64,linux/arm64`。
+3. 从 `images.txt` 移除该镜像，手动同步。
 
 **命名空间超限（校验失败）。**
 清单使用了超过 3 个不同的命名空间。合并到更少的命名空间，或升级到 ACR 企业版。
