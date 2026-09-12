@@ -1,4 +1,16 @@
-# 实验阶段：仅同步一个镜像验证工作流，全部通过后再恢复完整清单
-# 恢复原清单：git checkout HEAD~1 -- images.txt 或参考 README 中的格式说明
+# 实验阶段：先跑通几个不同源的镜像验证工作流，全部通过后再恢复完整清单
+# 恢复原清单：git checkout db214b4 -- images.txt
 
+# Docker Hub
+cn-base|python
 cn-infra|nginx
+cn-infra|postgres
+
+# GCR
+cn-infra|gcr.io/k8s-minikube/kicbase:v0.0.50
+
+# GHCR
+cn-infra|ghcr.io/headlamp-k8s/headlamp:v0.43.0
+
+# Quay.io
+cn-infra|quay.io/jetstack/cert-manager-controller:v1.18.2

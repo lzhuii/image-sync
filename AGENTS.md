@@ -1,12 +1,12 @@
 # AGENTS.md
 
-Repo purpose: one-shot tool that mirrors container images from Docker Hub / GCR / GHCR / Quay.io into Aliyun ACR via GitHub Actions. No app code — just `sync.sh`, `images.txt`, and `.github/workflows/{sync,lint}.yml`.
+Repo purpose: one-shot tool that mirrors container images from Docker Hub / GCR / GHCR / Quay.io into Aliyun ACR via GitHub Actions. No app code — just `sync.sh`, `images.txt`, and `.github/workflows/sync.yml`.
 
 ## Toolchain
 
 - Only dependency is `skopeo` (installed by the workflow; locally you must install + `skopeo login` before running).
 - No build, test, formatter, codegen. Don't look for them — they don't exist.
-- `shellcheck` runs on every push via `.github/workflows/lint.yml`. Run it locally before pushing if you have it installed.
+- `shellcheck` runs on every push as a step inside `.github/workflows/sync.yml` (installed together with skopeo). Run it locally before pushing if you have it installed.
 - Do not add a package manager, CI matrix, or new toolchain.
 
 ## Triggers

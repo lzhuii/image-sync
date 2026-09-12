@@ -20,10 +20,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Install skopeo
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y skopeo
+          sudo apt-get install -y skopeo shellcheck
+
+      - name: shellcheck
+        run: shellcheck -x sync.sh
 
       - name: Validate images.txt
         run: bash sync.sh validate
