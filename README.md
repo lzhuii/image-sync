@@ -110,7 +110,6 @@ Rules:
 | `REGISTRY` | `registry.cn-beijing.aliyuncs.com` | Target ACR address |
 | `CONCURRENCY` | `4` | Parallel sync jobs |
 | `MAX_NAMESPACES` | `3` | Max namespace count (validation only) |
-| `MULTI_ARCH` | `all` | skopeo copy multi-arch mode: `all` / `system` / `index-only` |
 
 `REGISTRY` is the Beijing ACR endpoint by default. Override it before deploying to another region (e.g. `registry.cn-hangzhou.aliyuncs.com`).
 
@@ -208,11 +207,10 @@ You hit the anonymous rate limit. Configure `DOCKERHUB_USERNAME` and `DOCKERHUB_
 The source tag doesn't exist or is unreachable. Check the exact reference in your browser first.
 
 **`denied: unknown manifest class for application/vnd.oci.empty.v1+json` when copying a multi-arch image.**
-Some source images (e.g. `gitea/gitea`) have manifest lists that include empty placeholder manifests. ACR personal edition rejects the `application/vnd.oci.empty.v1+json` media type. The apt-installed skopeo on Ubuntu 24.04 only supports `--multi-arch=system|all|index-only` (no platform-list), so you can't skip individual platforms. Workarounds:
+Some source images (e.g. `gitea/gitea`) have manifest lists that include empty placeholder manifests. ACR personal edition rejects the `application/vnd.oci.empty.v1+json` media type. This repo uses `skopeo copy -a` (equivalent to `--all`) which copies the full multi-arch manifest list, so these images will fail. Workarounds:
 
-1. Set `MULTI_ARCH=system` to copy only the runner's architecture (loses multi-arch manifests).
-2. Upgrade to skopeo 1.13+ (build from source or install manually) to enable `--multi-arch=linux/amd64,linux/arm64`.
-3. Remove the problematic image from `images.txt` and sync it manually.
+1. Remove the problematic image from `images.txt` and sync it manually.
+2. Upgrade to skopeo 1.13+ (build from source or install manually) to enable `--multi-arch=linux/amd64,linux/arm64` for platform-specific copying.
 
 **Namespace limit reached (validate error).**
 The manifest uses more than 3 distinct namespaces. Consolidate images under fewer namespaces, or upgrade to ACR Enterprise.

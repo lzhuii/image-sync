@@ -6,7 +6,6 @@ cn-infra|nginx
 cn-infra|postgres
 cn-infra|mysql
 cn-infra|redis
-cn-infra|minio/minio
 cn-infra|gitea/gitea
 cn-infra|apache/kafka
 cn-infra|spark:4.1.2
