@@ -85,31 +85,30 @@ validate_manifest() {
 sync_one() {
     local ns="$1" src="$2"
     local dst="$REGISTRY/$ns/${src##*/}"
+    local src_d dst_d err_file
+    err_file=$(mktemp)
 
-    local src_d dst_d stderr_file
-    stderr_file=$(mktemp)
-
-    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src" 2>"$stderr_file") || {
+    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src" 2>"$err_file") || {
         echo "✗ 失败 $src → $dst（源端拉取失败）"
-        echo "  $(tail -3 "$stderr_file")"
-        rm -f "$stderr_file"
+        cat "$err_file"
+        rm -f "$err_file"
         return 1
     }
 
     dst_d=$(skopeo inspect --format '{{.Digest}}' "docker://$dst" 2>/dev/null) || true
     if [ -n "$dst_d" ] && [ "$src_d" = "$dst_d" ]; then
         echo "＝ 跳过 $src → $dst（digest 一致 ${src_d:0:19}...）"
-        rm -f "$stderr_file"
+        rm -f "$err_file"
         return 0
     fi
 
-    skopeo copy -a "docker://$src" "docker://$dst" 2>"$stderr_file" || {
+    # 让 skopeo copy 的 stderr 直接输出到日志，2>&1 确保不被折叠
+    skopeo copy -a "docker://$src" "docker://$dst" 2>&1 || {
         echo "✗ 失败 $src → $dst（复制失败）"
-        echo "  $(tail -3 "$stderr_file")"
-        rm -f "$stderr_file"
+        rm -f "$err_file"
         return 1
     }
-    rm -f "$stderr_file"
+    rm -f "$err_file"
     echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
 }
 
