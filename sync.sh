@@ -102,9 +102,9 @@ sync_one() {
         return 0
     fi
 
-    # 让 skopeo copy 的 stderr 直接输出到日志，2>&1 确保不被折叠
-    skopeo copy -a "docker://$src" "docker://$dst" 2>&1 || {
+    skopeo copy -a "docker://$src" "docker://$dst" 2>"$err_file" || {
         echo "✗ 失败 $src → $dst（复制失败）"
+        cat "$err_file"
         rm -f "$err_file"
         return 1
     }
