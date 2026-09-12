@@ -10,10 +10,9 @@ permissions:
 
 concurrency:
   group: sync-images
-  cancel-in-progress: true
 
 jobs:
-  sync-images:
+  sync:
     runs-on: ubuntu-latest
     env:
       REGISTRY: registry.cn-beijing.aliyuncs.com
@@ -26,8 +25,23 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y skopeo
 
+      - name: Validate images.txt
+        run: bash sync.sh validate
+
       - name: Login to ACR
         run: skopeo login "$REGISTRY" -u "${{ secrets.ACR_USERNAME }}" -p "${{ secrets.ACR_PASSWORD }}"
 
-      - name: Sync Images
+      - name: Login to Docker Hub (if configured)
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -n "${DOCKERHUB_USERNAME:-}" ] && [ -n "${DOCKERHUB_TOKEN:-}" ]; then
+            echo "Authenticating to Docker Hub (raises pull rate limit from 100 to 200 per 6h)"
+            skopeo login docker.io -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
+          else
+            echo "Docker Hub credentials not configured, pulling anonymously (rate limit 100 per 6h per IP)"
+          fi
+
+      - name: Sync images
         run: bash sync.sh
