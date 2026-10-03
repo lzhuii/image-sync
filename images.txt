@@ -6,7 +6,8 @@ cn-infra|nginx
 cn-infra|postgres
 cn-infra|mysql
 cn-infra|redis
-cn-infra|gitea/gitea
+cn-infra|gitea/gitea:1.27
+cn-infra|gitea/runner:3
 cn-infra|apache/kafka
 cn-infra|spark:4.1.2
 cn-infra|flink:2.3.0
