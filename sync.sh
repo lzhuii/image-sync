@@ -99,24 +99,12 @@ sync_one() {
         return 0
     fi
 
-    # ACR 个人版不接受 manifest list 中的 empty manifest，改为按架构分别推送，
-    # 目标 tag 追加架构后缀（-amd64 / -arm64），避免同 tag 覆盖。
-    echo "！ 多架构失败，回退到按架构同步 amd64 + arm64"
-    local ok=0 arch
-    for arch in amd64 arm64; do
-        if skopeo copy --override-arch "$arch" --override-os linux \
-            "docker://$src" "docker://${dst}-${arch}"; then
-            echo "  ✓ ${dst}-${arch}"
-            ok=$((ok+1))
-        else
-            echo "  ✗ ${dst}-${arch}"
-        fi
-    done
-    if [ "$ok" -eq 0 ]; then
-        echo "✗ 失败 $src → $dst（回退也全部失败）"
+    echo "！ 多架构失败，回退到 --override-arch amd64（ACR 个人版不接受 manifest list 中的 empty manifest）"
+    if ! skopeo copy --override-arch amd64 --override-os linux "docker://$src" "docker://$dst"; then
+        echo "✗ 失败 $src → $dst（复制失败）"
         return 1
     fi
-    echo "✓ 同步 $src → $dst-{amd64,arm64}（单架构 $ok/2）"
+    echo "✓ 同步 $src → $dst（单架构 amd64）"
 }
 
 main() {

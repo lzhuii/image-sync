@@ -40,7 +40,7 @@ bash sync.sh
 ```
 
 - Env vars: `REGISTRY` (default `registry.cn-beijing.aliyuncs.com`, Beijing region — override before pushing elsewhere), `MAX_NAMESPACES` (default `3`).
-- `skopeo copy -a` is used to preserve multi-arch manifests. ACR personal edition rejects `application/vnd.oci.empty.v1+json` empty manifest entries that some upstream manifest lists include (e.g. `gitea/gitea`). For those, `sync.sh` falls back to pushing each architecture separately with `--override-arch <arch> --override-os linux`, using destination tags suffixed with the arch (e.g. `.../gitea:1.27-amd64`, `.../gitea:1.27-arm64`) — the original tag is NOT overwritten, so consumers must reference the `-<arch>` tag.
+- `skopeo copy -a` is used to preserve multi-arch manifests. ACR personal edition rejects `application/vnd.oci.empty.v1+json` empty manifest entries that some upstream manifest lists include (e.g. `gitea/gitea`). For those, `sync.sh` falls back to `skopeo copy --override-arch amd64 --override-os linux`, producing a single-arch image on the destination at the same tag.
 - `sync.sh` uses digest comparison; unchanged images are skipped. There is no `--force` flag — altering the source digest is the only way to re-push.
 
 ## Conventions
