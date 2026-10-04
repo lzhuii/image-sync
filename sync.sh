@@ -23,114 +23,117 @@ usage() {
 EOF
 }
 
-validate_manifest() {
+# 解析 images.txt，输出 "namespace|source_image" 格式
+# 跳过空行、注释、字段不足的行；去除首尾空白和行内注释
+parse_images() {
     local input="${1:-images.txt}"
-
     awk -F'|' '
-        BEGIN { errors = 0; total = 0 }
         /^[[:space:]]*#/ { next }
         /^[[:space:]]*$/ { next }
         {
             sub(/[[:space:]]*#.*/, "")
-            n = split($0, parts, "|")
-            if (n < 2) {
-                printf "行 %d: 缺少 \"|\" 分隔符\n", NR > "/dev/stderr"
+            if (NF < 2) next
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2)
+            if ($1 != "" && $2 != "") print $1 "|" $2
+        }
+    ' "$input"
+}
+
+validate_manifest() {
+    local input="${1:-images.txt}"
+
+    awk -F'|' '
+        BEGIN { errors = 0; count = 0 }
+        /^[[:space:]]*#/ { next }
+        /^[[:space:]]*$/ { next }
+        {
+            sub(/[[:space:]]*#.*/, "")
+            if (NF < 2) {
+                printf "错误：行 %d 缺少 \"|\" 分隔符\n", NR > "/dev/stderr"
                 errors++
                 next
             }
-            ns = parts[1]; gsub(/^[[:space:]]+|[[:space:]]+$/, "", ns)
-            src = parts[2]; gsub(/^[[:space:]]+|[[:space:]]+$/, "", src)
-            if (ns == "") {
-                printf "行 %d: 命名空间为空\n", NR > "/dev/stderr"
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2)
+            if ($1 == "") {
+                printf "错误：行 %d 命名空间为空\n", NR > "/dev/stderr"
                 errors++
                 next
             }
-            if (src == "") {
-                printf "行 %d: 源镜像为空\n", NR > "/dev/stderr"
+            if ($2 == "") {
+                printf "错误：行 %d 源镜像为空\n", NR > "/dev/stderr"
                 errors++
                 next
             }
-            key = ns "|" src
-            if (key in entries) {
-                printf "行 %d: 重复条目 %s\n", NR, key > "/dev/stderr"
+            key = $1 "|" $2
+            if (key in seen) {
+                printf "错误：行 %d 重复条目 %s\n", NR, key > "/dev/stderr"
                 errors++
             } else {
-                entries[key] = 1
-                ns_seen[ns] = 1
-                total++
+                seen[key] = 1
+                namespaces[$1] = 1
+                count++
             }
         }
         END {
             ns_count = 0
-            for (k in ns_seen) ns_count++
+            for (ns in namespaces) ns_count++
             if (errors > 0) {
                 printf "校验失败：%d 个错误\n", errors > "/dev/stderr"
                 exit 1
             }
-            printf "校验通过：%d 条镜像，%d 个命名空间\n", total, ns_count > "/dev/stderr"
+            printf "校验通过：%d 条镜像，%d 个命名空间\n", count, ns_count > "/dev/stderr"
         }
     ' "$input"
 }
 
 sync_one() {
-    local ns="$1" src="$2"
-    local dst="$REGISTRY/$ns/${src##*/}"
-    local src_d dst_d
+    local namespace="$1" source="$2"
+    local dest="${REGISTRY}/${namespace}/${source##*/}"
+    local src_digest dest_digest
 
-    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src") || {
-        echo "✗ 失败 $src → $dst（源端拉取失败）"
+    src_digest=$(skopeo inspect --format '{{.Digest}}' "docker://$source") || {
+        echo "✗ 失败 $source → $dest（源端拉取失败）"
         return 1
     }
 
-    dst_d=$(skopeo inspect --format '{{.Digest}}' "docker://$dst" 2>/dev/null) || true
-    if [ -n "$dst_d" ] && [ "$src_d" = "$dst_d" ]; then
-        echo "＝ 跳过 $src → $dst（digest 一致 ${src_d:0:19}...）"
+    dest_digest=$(skopeo inspect --format '{{.Digest}}' "docker://$dest" 2>/dev/null) || true
+    if [ -n "$dest_digest" ] && [ "$src_digest" = "$dest_digest" ]; then
+        echo "＝ 跳过 $source → $dest（digest 一致 ${src_digest:0:19}...）"
         return 0
     fi
 
-    if skopeo copy -a "docker://$src" "docker://$dst"; then
-        echo "✓ 同步 $src → $dst（多架构）"
+    if skopeo copy -a "docker://$source" "docker://$dest"; then
+        echo "✓ 同步 $source → $dest（多架构）"
         return 0
     fi
 
-    echo "！ 多架构失败，回退到 --override-arch amd64（ACR 个人版不接受 manifest list 中的 empty manifest）"
-    if ! skopeo copy --override-arch amd64 --override-os linux "docker://$src" "docker://$dst"; then
-        echo "✗ 失败 $src → $dst（复制失败）"
+    echo "！ 多架构失败，回退到 --override-arch amd64"
+    if ! skopeo copy --override-arch amd64 --override-os linux "docker://$source" "docker://$dest"; then
+        echo "✗ 失败 $source → $dest（复制失败）"
         return 1
     fi
-    echo "✓ 同步 $src → $dst（单架构 amd64）"
+    echo "✓ 同步 $source → $dest（单架构 amd64）"
 }
 
 main() {
-    local fail=0 ns src
-    while IFS='|' read -r ns src; do
-        sync_one "$ns" "$src" || fail=$((fail+1))
-    done < <(awk -F'|' '/^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
-        { sub(/[[:space:]]*#.*/, ""); if (split($0, f, "|") < 2) next
-          gsub(/^[[:space:]]+|[[:space:]]+$/, "", f[1])
-          gsub(/^[[:space:]]+|[[:space:]]+$/, "", f[2])
-          if (f[1] != "" && f[2] != "") print f[1] "|" f[2]
-        }' images.txt)
+    local failures=0 namespace source
 
-    if [ "$fail" -gt 0 ]; then
-        printf "\n汇总：失败 %d 个镜像\n" "$fail" >&2
+    while IFS='|' read -r namespace source; do
+        sync_one "$namespace" "$source" || failures=$((failures + 1))
+    done < <(parse_images)
+
+    if [ "$failures" -gt 0 ]; then
+        echo "" >&2
+        echo "汇总：失败 $failures 个镜像" >&2
         exit 1
     fi
 }
 
 case "${1:-}" in
-    validate)
-        validate_manifest "${2:-images.txt}"
-        ;;
-    help|-h|--help)
-        usage
-        ;;
-    "")
-        main
-        ;;
-    *)
-        echo "未知参数：$1" >&2
-        usage
-        exit 2
-        ;;
+    validate) validate_manifest "${2:-images.txt}" ;;
+    help|-h|--help) usage ;;
+    "") main ;;
+    *) echo "未知参数：$1" >&2; usage; exit 2 ;;
 esac
