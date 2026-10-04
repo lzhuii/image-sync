@@ -9,7 +9,7 @@ REGISTRY="${REGISTRY:-registry.cn-beijing.aliyuncs.com}"
 REGISTRY="${REGISTRY%/}"
 
 usage() {
-    cat <<EOF
+	cat <<EOF
 用法：bash sync.sh [validate]
 
 参数：
@@ -26,8 +26,8 @@ EOF
 # 解析 images.txt，输出 "namespace|source_image" 格式
 # 跳过空行、注释、字段不足的行；去除首尾空白和行内注释
 parse_images() {
-    local input="${1:-images.txt}"
-    awk -F'|' '
+	local input="${1:-images.txt}"
+	awk -F'|' '
         /^[[:space:]]*#/ { next }
         /^[[:space:]]*$/ { next }
         {
@@ -41,9 +41,9 @@ parse_images() {
 }
 
 validate_manifest() {
-    local input="${1:-images.txt}"
+	local input="${1:-images.txt}"
 
-    awk -F'|' '
+	awk -F'|' '
         BEGIN { errors = 0; count = 0 }
         /^[[:space:]]*#/ { next }
         /^[[:space:]]*$/ { next }
@@ -89,51 +89,55 @@ validate_manifest() {
 }
 
 sync_one() {
-    local namespace="$1" source="$2"
-    local dest="${REGISTRY}/${namespace}/${source##*/}"
-    local src_digest dest_digest
+	local namespace="$1" source="$2"
+	local dest="${REGISTRY}/${namespace}/${source##*/}"
+	local src_digest dest_digest
 
-    src_digest=$(skopeo inspect --format '{{.Digest}}' "docker://$source") || {
-        echo "✗ 失败 $source → $dest（源端拉取失败）"
-        return 1
-    }
+	src_digest=$(skopeo inspect --format '{{.Digest}}' "docker://$source") || {
+		echo "✗ 失败 $source → $dest（源端拉取失败）"
+		return 1
+	}
 
-    dest_digest=$(skopeo inspect --format '{{.Digest}}' "docker://$dest" 2>/dev/null) || true
-    if [ -n "$dest_digest" ] && [ "$src_digest" = "$dest_digest" ]; then
-        echo "＝ 跳过 $source → $dest（digest 一致 ${src_digest:0:19}...）"
-        return 0
-    fi
+	dest_digest=$(skopeo inspect --format '{{.Digest}}' "docker://$dest" 2>/dev/null) || true
+	if [ -n "$dest_digest" ] && [ "$src_digest" = "$dest_digest" ]; then
+		echo "○ 跳过 $source → $dest（digest 一致 ${src_digest:0:19}...）"
+		return 0
+	fi
 
-    if skopeo copy -a "docker://$source" "docker://$dest"; then
-        echo "✓ 同步 $source → $dest（多架构）"
-        return 0
-    fi
+	if skopeo copy -a "docker://$source" "docker://$dest"; then
+		echo "✓ 同步 $source → $dest（多架构）"
+		return 0
+	fi
 
-    echo "！ 多架构失败，回退到 --override-arch amd64"
-    if ! skopeo copy --override-arch amd64 --override-os linux "docker://$source" "docker://$dest"; then
-        echo "✗ 失败 $source → $dest（复制失败）"
-        return 1
-    fi
-    echo "✓ 同步 $source → $dest（单架构 amd64）"
+	echo "！ 多架构失败，回退到 --override-arch amd64"
+	if ! skopeo copy --override-arch amd64 --override-os linux "docker://$source" "docker://$dest"; then
+		echo "✗ 失败 $source → $dest（复制失败）"
+		return 1
+	fi
+	echo "✓ 同步 $source → $dest（单架构 amd64）"
 }
 
 main() {
-    local failures=0 namespace source
+	local failures=0 namespace source
 
-    while IFS='|' read -r namespace source; do
-        sync_one "$namespace" "$source" || failures=$((failures + 1))
-    done < <(parse_images)
+	while IFS='|' read -r namespace source; do
+		sync_one "$namespace" "$source" || failures=$((failures + 1))
+	done < <(parse_images)
 
-    if [ "$failures" -gt 0 ]; then
-        echo "" >&2
-        echo "汇总：失败 $failures 个镜像" >&2
-        exit 1
-    fi
+	if [ "$failures" -gt 0 ]; then
+		echo "" >&2
+		echo "汇总：失败 $failures 个镜像" >&2
+		exit 1
+	fi
 }
 
 case "${1:-}" in
-    validate) validate_manifest "${2:-images.txt}" ;;
-    help|-h|--help) usage ;;
-    "") main ;;
-    *) echo "未知参数：$1" >&2; usage; exit 2 ;;
+validate) validate_manifest "${2:-images.txt}" ;;
+help | -h | --help) usage ;;
+"") main ;;
+*)
+	echo "未知参数：$1" >&2
+	usage
+	exit 2
+	;;
 esac
