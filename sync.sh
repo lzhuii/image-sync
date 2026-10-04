@@ -102,14 +102,15 @@ sync_one() {
         return 0
     fi
 
-    skopeo copy -a "docker://$src" "docker://$dst" 2>"$err_file" || {
-        echo "✗ 失败 $src → $dst（复制失败）"
-        cat "$err_file"
-        rm -f "$err_file"
-        return 1
-    }
-    rm -f "$err_file"
-    echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
+    skopeo copy -a "docker://$src" "docker://$dst" 
+#    skopeo copy -a "docker://$src" "docker://$dst" 2>"$err_file" || {
+#        echo "✗ 失败 $src → $dst（复制失败）"
+#        cat "$err_file"
+#        rm -f "$err_file"
+#        return 1
+#    }
+#    rm -f "$err_file"
+#    echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
 }
 
 main() {
