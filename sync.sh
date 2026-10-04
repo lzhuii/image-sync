@@ -123,7 +123,7 @@ main() {
 
 	while IFS='|' read -r namespace source; do
 		sync_one "$namespace" "$source" || failures=$((failures + 1))
-	done < <(parse_images)
+	done < <(parse_images images.txt)
 
 	if [ "$failures" -gt 0 ]; then
 		echo "" >&2
