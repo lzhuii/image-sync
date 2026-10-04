@@ -1,13 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # 同步 images.txt 中的镜像到目标仓库
 # 用法：
 #   bash sync.sh            执行同步
 #   bash sync.sh validate   仅校验 images.txt，不联网
-set -uo pipefail
+set -euo pipefail
 
 REGISTRY="${REGISTRY:-registry.cn-beijing.aliyuncs.com}"
 REGISTRY="${REGISTRY%/}"
-MAX_NAMESPACES="${MAX_NAMESPACES:-3}"
 
 usage() {
     cat <<EOF
@@ -18,7 +17,6 @@ usage() {
 
 环境变量：
   REGISTRY        目标仓库地址（默认 ${REGISTRY}）
-  MAX_NAMESPACES  最大命名空间数上限（默认 ${MAX_NAMESPACES}，ACR 个人版为 3）
 
 源端凭据通过 skopeo 默认 authfile 读取，由调用方（如 GitHub Actions）
 预先执行 skopeo login 完成。本脚本不处理认证。
@@ -28,7 +26,7 @@ EOF
 validate_manifest() {
     local input="${1:-images.txt}"
 
-    awk -v max_ns="$MAX_NAMESPACES" -F'|' '
+    awk -F'|' '
         BEGIN { errors = 0; total = 0 }
         /^[[:space:]]*#/ { next }
         /^[[:space:]]*$/ { next }
@@ -65,10 +63,6 @@ validate_manifest() {
         END {
             ns_count = 0
             for (k in ns_seen) ns_count++
-            if (ns_count > max_ns) {
-                printf "错误：命名空间数 %d 超过上限 %d（ACR 个人版硬上限）\n", ns_count, max_ns > "/dev/stderr"
-                errors++
-            }
             if (errors > 0) {
                 printf "校验失败：%d 个错误\n", errors > "/dev/stderr"
                 exit 1

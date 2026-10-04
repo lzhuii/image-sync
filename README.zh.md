@@ -108,7 +108,6 @@ bash sync.sh
 | 变量 | 默认值 | 说明 |
 |---|---|---|
 | `REGISTRY` | `registry.cn-beijing.aliyuncs.com` | 目标仓库地址 |
-| `MAX_NAMESPACES` | `3` | 命名空间上限（仅校验用） |
 
 `REGISTRY` 默认为北京 ACR 地址。部署到其他区域前需要覆盖（如 `registry.cn-hangzhou.aliyuncs.com`）。
 
@@ -138,7 +137,6 @@ bash sync.sh validate
 - 缺少 `|` 分隔符
 - 命名空间或源镜像为空
 - 重复条目
-- 命名空间数超过 3（或 `$MAX_NAMESPACES`）
 
 工作流会在第一步执行 `bash sync.sh validate`。任何校验错误都会在工作流做任何网络调用前让工作流失败。
 

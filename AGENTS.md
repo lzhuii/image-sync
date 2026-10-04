@@ -22,7 +22,7 @@ bash sync.sh            # run the sync (digest comparison + copy)
 bash sync.sh validate   # offline manifest check, no network, no skopeo
 ```
 
-- `validate` is the workflow's first step. It rejects: missing `|` delimiter, empty namespace or source, duplicate entries, namespace count > 3 (ACR personal hard limit, override with `MAX_NAMESPACES`).
+- `validate` is the workflow's first step. It rejects: missing `|` delimiter, empty namespace or source, duplicate entries.
 - `validate` uses a single `awk` pass over `images.txt`. The sync path reads the same file with `awk` to filter comments/whitespace, then iterates sequentially in bash (no `xargs`, no parallelism).
 
 ## `images.txt` format (easy to get wrong)
@@ -39,7 +39,7 @@ skopeo login registry.cn-beijing.aliyuncs.com -u <user> -p <password>
 bash sync.sh
 ```
 
-- Env vars: `REGISTRY` (default `registry.cn-beijing.aliyuncs.com`, Beijing region — override before pushing elsewhere), `MAX_NAMESPACES` (default `3`).
+- Env vars: `REGISTRY` (default `registry.cn-beijing.aliyuncs.com`, Beijing region — override before pushing elsewhere).
 - `skopeo copy -a` is used to preserve multi-arch manifests. ACR personal edition rejects `application/vnd.oci.empty.v1+json` empty manifest entries that some upstream manifest lists include (e.g. `gitea/gitea`). For those, `sync.sh` falls back to `skopeo copy --override-arch amd64 --override-os linux`, producing a single-arch image on the destination at the same tag.
 - `sync.sh` uses digest comparison; unchanged images are skipped. There is no `--force` flag — altering the source digest is the only way to re-push.
 

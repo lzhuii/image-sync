@@ -108,7 +108,6 @@ Rules:
 | Variable | Default | Description |
 |---|---|---|
 | `REGISTRY` | `registry.cn-beijing.aliyuncs.com` | Target ACR address |
-| `MAX_NAMESPACES` | `3` | Max namespace count (validation only) |
 
 `REGISTRY` is the Beijing ACR endpoint by default. Override it before deploying to another region (e.g. `registry.cn-hangzhou.aliyuncs.com`).
 
@@ -138,7 +137,6 @@ bash sync.sh validate
 - Missing `|` delimiter
 - Empty namespace or source
 - Duplicate entries
-- Namespace count exceeds 3 (or `$MAX_NAMESPACES`)
 
 The workflow runs `bash sync.sh validate` as the first step. Any validation error fails the workflow before any network call is made.
 
