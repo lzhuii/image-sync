@@ -94,11 +94,17 @@ sync_one() {
         return 0
     fi
 
-    skopeo copy -a "docker://$src" "docker://$dst" || {
+    if skopeo copy -a "docker://$src" "docker://$dst"; then
+        echo "✓ 同步 $src → $dst（多架构）"
+        return 0
+    fi
+
+    echo "！ 多架构失败，回退到 --override-arch amd64（ACR 个人版不接受 manifest list 中的 empty manifest）"
+    if ! skopeo copy --override-arch amd64 --override-os linux "docker://$src" "docker://$dst"; then
         echo "✗ 失败 $src → $dst（复制失败）"
         return 1
-    }
-    echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
+    fi
+    echo "✓ 同步 $src → $dst（单架构 amd64）"
 }
 
 main() {
