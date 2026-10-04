@@ -108,7 +108,6 @@ Rules:
 | Variable | Default | Description |
 |---|---|---|
 | `REGISTRY` | `registry.cn-beijing.aliyuncs.com` | Target ACR address |
-| `CONCURRENCY` | `4` | Parallel sync jobs |
 | `MAX_NAMESPACES` | `3` | Max namespace count (validation only) |
 
 `REGISTRY` is the Beijing ACR endpoint by default. Override it before deploying to another region (e.g. `registry.cn-hangzhou.aliyuncs.com`).

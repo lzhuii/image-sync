@@ -108,7 +108,6 @@ bash sync.sh
 | 变量 | 默认值 | 说明 |
 |---|---|---|
 | `REGISTRY` | `registry.cn-beijing.aliyuncs.com` | 目标仓库地址 |
-| `CONCURRENCY` | `4` | 同步并发数 |
 | `MAX_NAMESPACES` | `3` | 命名空间上限（仅校验用） |
 
 `REGISTRY` 默认为北京 ACR 地址。部署到其他区域前需要覆盖（如 `registry.cn-hangzhou.aliyuncs.com`）。

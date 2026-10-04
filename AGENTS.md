@@ -23,7 +23,7 @@ bash sync.sh validate   # offline manifest check, no network, no skopeo
 ```
 
 - `validate` is the workflow's first step. It rejects: missing `|` delimiter, empty namespace or source, duplicate entries, namespace count > 3 (ACR personal hard limit, override with `MAX_NAMESPACES`).
-- Both subcommands use `awk` + `xargs -P`; don't reformat without checking POSIX sh compatibility.
+- `validate` uses a single `awk` pass over `images.txt`. The sync path reads the same file with `awk` to filter comments/whitespace, then iterates sequentially in bash (no `xargs`, no parallelism).
 
 ## `images.txt` format (easy to get wrong)
 
@@ -39,7 +39,7 @@ skopeo login registry.cn-beijing.aliyuncs.com -u <user> -p <password>
 bash sync.sh
 ```
 
-- Env vars: `REGISTRY` (default `registry.cn-beijing.aliyuncs.com`, Beijing region — override before pushing elsewhere), `CONCURRENCY` (default `4`), `MAX_NAMESPACES` (default `3`).
+- Env vars: `REGISTRY` (default `registry.cn-beijing.aliyuncs.com`, Beijing region — override before pushing elsewhere), `MAX_NAMESPACES` (default `3`).
 - `skopeo copy -a` is used to preserve multi-arch manifests. ACR personal edition rejects `application/vnd.oci.empty.v1+json` empty manifest entries that some upstream manifest lists include (e.g. `gitea/gitea`), so those images will fail.
 - `sync.sh` uses digest comparison; unchanged images are skipped. There is no `--force` flag — altering the source digest is the only way to re-push.
 

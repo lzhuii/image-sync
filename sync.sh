@@ -3,13 +3,10 @@
 # 用法：
 #   bash sync.sh            执行同步
 #   bash sync.sh validate   仅校验 images.txt，不联网
-# shellcheck disable=SC2016  # bash -c 内的参数展开由子 shell 处理，故意保留单引号
 set -uo pipefail
 
 REGISTRY="${REGISTRY:-registry.cn-beijing.aliyuncs.com}"
 REGISTRY="${REGISTRY%/}"
-CONCURRENCY="${CONCURRENCY:-4}"
-
 MAX_NAMESPACES="${MAX_NAMESPACES:-3}"
 
 usage() {
@@ -21,7 +18,6 @@ usage() {
 
 环境变量：
   REGISTRY        目标仓库地址（默认 ${REGISTRY}）
-  CONCURRENCY     同步并发数（默认 ${CONCURRENCY}）
   MAX_NAMESPACES  最大命名空间数上限（默认 ${MAX_NAMESPACES}，ACR 个人版为 3）
 
 源端凭据通过 skopeo 默认 authfile 读取，由调用方（如 GitHub Actions）
@@ -85,56 +81,41 @@ validate_manifest() {
 sync_one() {
     local ns="$1" src="$2"
     local dst="$REGISTRY/$ns/${src##*/}"
-    local src_d dst_d err_file
-    err_file=$(mktemp)
+    local src_d dst_d
 
-    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src" 2>"$err_file") || {
+    src_d=$(skopeo inspect --format '{{.Digest}}' "docker://$src") || {
         echo "✗ 失败 $src → $dst（源端拉取失败）"
-        cat "$err_file"
-        rm -f "$err_file"
         return 1
     }
 
     dst_d=$(skopeo inspect --format '{{.Digest}}' "docker://$dst" 2>/dev/null) || true
     if [ -n "$dst_d" ] && [ "$src_d" = "$dst_d" ]; then
         echo "＝ 跳过 $src → $dst（digest 一致 ${src_d:0:19}...）"
-        rm -f "$err_file"
         return 0
     fi
 
-    skopeo copy -a "docker://$src" "docker://$dst" 
-#    skopeo copy -a "docker://$src" "docker://$dst" 2>"$err_file" || {
-#        echo "✗ 失败 $src → $dst（复制失败）"
-#        cat "$err_file"
-#        rm -f "$err_file"
-#        return 1
-#    }
-#    rm -f "$err_file"
-#    echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
+    skopeo copy -a "docker://$src" "docker://$dst" || {
+        echo "✗ 失败 $src → $dst（复制失败）"
+        return 1
+    }
+    echo "✓ 同步 $src → $dst（digest ${src_d:0:19}...）"
 }
 
 main() {
-    export -f sync_one
-    export REGISTRY
-
-    awk -F'|' '/^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
+    local fail=0 ns src
+    while IFS='|' read -r ns src; do
+        sync_one "$ns" "$src" || fail=$((fail+1))
+    done < <(awk -F'|' '/^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
         { sub(/[[:space:]]*#.*/, ""); if (split($0, f, "|") < 2) next
           gsub(/^[[:space:]]+|[[:space:]]+$/, "", f[1])
           gsub(/^[[:space:]]+|[[:space:]]+$/, "", f[2])
           if (f[1] != "" && f[2] != "") print f[1] "|" f[2]
-        }' images.txt |
-        xargs -P "$CONCURRENCY" -I{} bash -c 'sync_one "${1%%|*}" "${1#*|}"' _ {} |
-        awk '
-            BEGIN { total = 0; ok = 0; skip = 0; fail = 0 }
-            /^✓/ { total++; ok++; print }
-            /^＝/ { total++; skip++; print }
-            /^✗/ { total++; fail++; print }
-            END {
-                printf "\n══════════════════════════════════\n"
-                printf "汇总：同步 %d · 跳过 %d · 失败 %d · 总计 %d\n", ok, skip, fail, total
-                if (fail > 0) exit 1
-            }
-        '
+        }' images.txt)
+
+    if [ "$fail" -gt 0 ]; then
+        printf "\n汇总：失败 %d 个镜像\n" "$fail" >&2
+        exit 1
+    fi
 }
 
 case "${1:-}" in
