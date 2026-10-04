@@ -98,6 +98,7 @@ sync_one() {
 		return 1
 	}
 
+	# 目标可能不存在（首次同步），失败不算错
 	dest_digest=$(skopeo inspect --format '{{.Digest}}' "docker://$dest" 2>/dev/null) || true
 	if [ -n "$dest_digest" ] && [ "$src_digest" = "$dest_digest" ]; then
 		echo "○ 跳过 $source → $dest（digest 一致 ${src_digest:0:19}...）"

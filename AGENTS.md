@@ -42,6 +42,7 @@ bash sync.sh
 - Env vars: `REGISTRY` (default `registry.cn-beijing.aliyuncs.com`, Beijing region — override before pushing elsewhere).
 - `skopeo copy -a` is used to preserve multi-arch manifests. ACR personal edition rejects `application/vnd.oci.empty.v1+json` empty manifest entries that some upstream manifest lists include (e.g. `gitea/gitea`). For those, `sync.sh` falls back to `skopeo copy --override-arch amd64 --override-os linux`, producing a single-arch image on the destination at the same tag.
 - `sync.sh` uses digest comparison; unchanged images are skipped. There is no `--force` flag — altering the source digest is the only way to re-push.
+- **Known limitation**: for images that go through the amd64 fallback path, the skip check never matches (it compares source manifest-list digest against the destination single-arch manifest digest, which never equal). Result: those images re-run `skopeo copy` every workflow invocation. Skopeo dedupes unchanged layers and blobs, so only the manifest is re-uploaded — functionally correct, just noisy in logs. To fix properly, the fallback path would need to compare against the amd64 sub-manifest digest instead of the manifest-list digest.
 
 ## Conventions
 
