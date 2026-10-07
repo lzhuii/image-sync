@@ -6,10 +6,11 @@ cn-infra|nginx:stable-alpine
 cn-infra|postgres:16.14-alpine
 #cn-infra|mysql
 cn-infra|redis:7-alpine
-cn-infra|gitea/gitea:1.27
-cn-infra|gitea/runner:3
+#cn-infra|gitea/gitea:1.27
+#cn-infra|gitea/runner:3
 cn-infra|vaultwarden/server:latest-alpine
 cn-infra|gethomepage/homepage
+cn-infra|offen/docker-volume-backup
 #cn-infra|apache/kafka
 #cn-infra|spark:4.1.2
 #cn-infra|flink:2.3.0
