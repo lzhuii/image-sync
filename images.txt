@@ -1,12 +1,13 @@
 ## cn-base - 基础语言/运行时环境
 #cn-base|python
+cn-base|alpine
 #
 ### cn-infra - 基础中间件与存储
 #cn-infra|nginx:stable-alpine
 #cn-infra|postgres:16.14-alpine
 #cn-infra|mysql
 #cn-infra|redis:7-alpine
-cn-infra|rustfs/rustfs
+#cn-infra|rustfs/rustfs
 #cn-infra|gitea/gitea:1.27
 #cn-infra|gitea/runner:3
 #cn-infra|vaultwarden/server:latest-alpine
