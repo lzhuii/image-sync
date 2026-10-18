@@ -12,7 +12,7 @@ cn-base|alpine
 #cn-infra|gitea/runner:3
 #cn-infra|vaultwarden/server:latest-alpine
 #cn-infra|gethomepage/homepage
-#cn-infra|offen/docker-volume-backup
+cn-infra|offen/docker-volume-backup
 #cn-infra|apache/kafka
 #cn-infra|spark:4.1.2
 #cn-infra|flink:2.3.0
